@@ -7,7 +7,14 @@ using System.ComponentModel;
 using System.Windows.Data;
 
 namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline.TreeListViewControl {
+  /// <summary>
+  /// This code was downloaded from http://blogs.windowsclient.net/ricciolocristian/archive/2008/03/22/a-complete-wpf-treelistview-control.aspx
+  /// 
+  /// Represent a control which is both TreeView and ListView in one.
+  /// It displays hierarchical data as well as tabular data.
+  /// </summary>
 	public class TreeListView : TreeView {
+
 
 		static TreeListView() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TreeListView), new FrameworkPropertyMetadata(typeof(TreeListView)));
@@ -80,8 +87,6 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline.TreeListViewControl {
 		}
 		
 
-		#region Public Properties
-
 		/// <summary> GridViewColumn List</summary>
 		public GridViewColumnCollection Columns {
 			get {
@@ -95,6 +100,17 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline.TreeListViewControl {
 
 		private GridViewColumnCollection _columns;
 
-		#endregion
+    public bool SetSelectedItem(object item) {
+      if (item == null) return false;
+
+      TreeListViewItem container = 
+        (TreeListViewItem)ItemContainerGenerator.ContainerFromItem(item);
+      if (container != null) {
+        container.IsSelected = true;
+        return true;
+      }
+
+      return false;
+    }
 	}
 }

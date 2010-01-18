@@ -221,6 +221,10 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 			DateTime? childEndDate = GetEndDate(child);
 			DateTime centerDate;
 
+      if (MinimumDate == null || MaximumDate == null) {
+        return Rect.Empty;
+      }
+
 			if (!(childStartDate.HasValue && childEndDate.HasValue)) {
 				// Patch?
 				centerDate = MinimumDate.Value;
@@ -250,9 +254,7 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 		}
 
 		private Rect CalcChildRectByDuration(TimelineItem child, int childRowIndex) {
-      if ((GetStartDate(child) == null && MinimumDate == null) ||
-        (GetEndDate(child) == null && MinimumDate == null)) {
-
+      if (GetStartDate(child) == null || GetEndDate(child) == null || MinimumDate == null) {
         return Rect.Empty;
       }
 

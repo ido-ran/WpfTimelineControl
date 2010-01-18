@@ -8,9 +8,6 @@ using System.Windows;
 
 namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
-  /// <summary>
-  /// ItemsControl which display Connection elements.
-  /// </summary>
 	public class ConnectionsPresenter : ItemsControl {
 
 		static ConnectionsPresenter() {

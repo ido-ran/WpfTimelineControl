@@ -5,11 +5,7 @@ using System.Text;
 using System.Windows;
 
 namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
-
-  /// <summary>
-  /// Define attached dependency properties which owned by all Timeline* classes.
-  /// </summary>
-  public class Timeline : DependencyObject {
+	public class Timeline : DependencyObject {
 
 
 		public static Nullable<DateTime> GetMinimumDate(DependencyObject obj) {
@@ -60,6 +56,7 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
 		public static double GetPixelsPerTick(DependencyObject obj) {
 			TimeSpan tickTimeSpan = GetTickTimeSpan(obj);
+      if (tickTimeSpan.Ticks == 0) return 1;
 			return ((double)1 / tickTimeSpan.Ticks);
 		}
 

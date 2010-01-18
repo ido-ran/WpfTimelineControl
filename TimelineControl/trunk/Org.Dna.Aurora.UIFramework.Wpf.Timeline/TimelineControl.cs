@@ -11,9 +11,7 @@ using System.Windows.Threading;
 
 namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
-  /// <summary>
-  /// Present data visually on a timeline.
-  /// </summary>
+
 	public class TimelineControl : Control {
 
 		private static readonly DateTime EmptyDate = new DateTime(2000, 01, 01);
@@ -61,6 +59,11 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 				IEnumerable items = (IEnumerable)e.NewValue;
 				AddItemsInternal(items);
 
+        INotifyCollectionChanged oldCollectionChanged = e.OldValue as INotifyCollectionChanged;
+        if (oldCollectionChanged != null) {
+          oldCollectionChanged.CollectionChanged -= ItemsSource_CollectionChanged;
+        }
+
 				INotifyCollectionChanged collectionChanged = e.NewValue as INotifyCollectionChanged;
 				if (collectionChanged != null) {
 					collectionChanged.CollectionChanged += new NotifyCollectionChangedEventHandler(ItemsSource_CollectionChanged);
@@ -72,6 +75,9 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 			if (e.Action == NotifyCollectionChangedAction.Add) {
 				AddItemInternal(e.NewItems[0]);
 			}
+      else if (e.Action == NotifyCollectionChangedAction.Remove) {
+        RemoveItemsInternal(e.OldItems);
+      }
 		}
 
 		private void AddItemsInternal(IEnumerable items) {
@@ -83,6 +89,16 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 		private void AddItemInternal(object item) {
 			Items.Add(item);
 		}
+
+    private void RemoveItemsInternal(IEnumerable items) {
+      foreach (object item in items) {
+        RemoveItemInternal(item);
+      }
+    }
+
+    private void RemoveItemInternal(object item) {
+      Items.Remove(item);
+    }
 
 		private static readonly DependencyPropertyKey ConnectionsPropertyKey =
 			DependencyProperty.RegisterReadOnly("Connections", typeof(IList<object>),
@@ -118,12 +134,26 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 				IEnumerable items = (IEnumerable)e.NewValue;
 				AddConnectionsInternal(items);
 
-				//INotifyCollectionChanged collectionChanged = e.NewValue as INotifyCollectionChanged;
-				//if (collectionChanged != null) {
-				//  collectionChanged.CollectionChanged += new NotifyCollectionChangedEventHandler(ItemsSource_CollectionChanged);
-				//}
+        INotifyCollectionChanged oldConnectionsSource = e.OldValue as INotifyCollectionChanged;
+        if (oldConnectionsSource != null) {
+          oldConnectionsSource.CollectionChanged -= ConnectionsSource_CollectionChanged;
+        }
+
+        INotifyCollectionChanged collectionChanged = e.NewValue as INotifyCollectionChanged;
+        if (collectionChanged != null) {
+          collectionChanged.CollectionChanged += ConnectionsSource_CollectionChanged;
+        }
 			}
 		}
+
+    void ConnectionsSource_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e) {
+      if (e.Action == NotifyCollectionChangedAction.Add) {
+        AddConnectionsInternal(e.NewItems);
+      }
+      else if (e.Action == NotifyCollectionChangedAction.Remove) {
+        RemoveConnectionsInternal(e.OldItems);
+      }
+    }
 
 		private void AddConnectionsInternal(IEnumerable items) {
 			foreach (object item in items) {
@@ -135,6 +165,15 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 			Connections.Add(item);
 		}
 
+    private void RemoveConnectionsInternal(IEnumerable items) {
+      foreach (var item in items) {
+        RemoveConnectionInternal(item);
+      }
+    }
+
+    private void RemoveConnectionInternal(object item) {
+      Connections.Remove(item);
+    }
 
 
 		public ItemsPanelTemplate ItemsPanel {
@@ -333,9 +372,17 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 				new FrameworkPropertyMetadata(Timeline.TickTimeSpanDefaultValue, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.BindsTwoWayByDefault, TickTimeSpanChanged));
 		}
 
+    private bool recalcMaxZoom = true;
+
     private static void MinimumMaximumDateChanged(object sender, DependencyPropertyChangedEventArgs e) {
       TimelineControl self = (TimelineControl)sender;
-      self.IsNoBounds = (self.MinimumDate == null && self.MaximumDate == null);
+      bool newIsNoBound = (self.MinimumDate == null && self.MaximumDate == null);
+      bool isNoBoundChanged = self.IsNoBounds != newIsNoBound;
+      self.IsNoBounds = newIsNoBound;
+      if (isNoBoundChanged) {
+        self.TickTimeSpan = Timeline.TickTimeSpanDefaultValue;
+      }
+      self.recalcMaxZoom = true;
     }
 
 		public TimelineControl() {
@@ -393,13 +440,11 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 			return itemsPresenter.ContainerFromItem(item);
 		}
 
-		private bool firstArrange = true;
-
 		protected override Size ArrangeOverride(Size arrangeBounds) {
 			Size actual = base.ArrangeOverride(arrangeBounds);
 
-			if (firstArrange) {
-				firstArrange = false;
+      if (recalcMaxZoom) {
+        recalcMaxZoom = false;
 				SetMaximumZoomFactor(actual);
 			}
 
@@ -413,6 +458,9 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
 				MaximumTickTimeSpan = TimeSpan.FromTicks((long)(tickPerTimeSpan));
 			}
+      else {
+        MaximumTickTimeSpan = TimeSpan.Zero;
+      }
 		}
 
 
