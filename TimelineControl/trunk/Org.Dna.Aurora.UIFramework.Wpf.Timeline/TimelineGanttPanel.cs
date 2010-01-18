@@ -59,7 +59,7 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 			double totalWidth = Math.Max(0, totalTimeSpan.Ticks * PixelsPerTick);
 			double totalHeight = Math.Max(0,
 				nextActualRowIndex * RowHeight + nextActualRowIndex * RowVerticalMargin);
-			return new Size(totalWidth, totalHeight);
+			return totalWidth <= 0 || totalHeight <= 0 ? Size.Empty : new Size(totalWidth, totalHeight);
 		}
 
 		protected virtual void SetChildRow(

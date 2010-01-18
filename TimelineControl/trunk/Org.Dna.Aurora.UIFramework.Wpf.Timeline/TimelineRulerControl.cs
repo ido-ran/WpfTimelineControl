@@ -19,7 +19,7 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
 			MinimumDateProperty = Timeline.MinimumDateProperty.AddOwner(typeof(TimelineRulerControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure, TimeframeChanged));
 			MaximumDateProperty = Timeline.MaximumDateProperty.AddOwner(typeof(TimelineRulerControl), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure, TimeframeChanged));
-			TickTimeSpanProperty = Timeline.TickTimeSpanProperty.AddOwner(typeof(TimelineRulerControl), new FrameworkPropertyMetadata(Timeline.TickTimeSpanDefaultValue, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender, TicksTimeSpanChanged));
+			TickTimeSpanProperty = Timeline.TickTimeSpanProperty.AddOwner(typeof(TimelineRulerControl), new FrameworkPropertyMetadata(Timeline.TickTimeSpanDefaultValue, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender, TicksTimeSpanChanged, TicksTimeSpanCoerce));
 		}
 
 		public static readonly DependencyProperty MaximumDateProperty;
@@ -139,8 +139,17 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 			if ((this._headerSV != null) && (this._mainSV == e.OriginalSource)) {
 				this._headerSV.ScrollToHorizontalOffset(e.HorizontalOffset);
 			}
-		} 
+		}
 
+    private static object TicksTimeSpanCoerce(DependencyObject d, object baseValue) {
+      TimeSpan ts = (TimeSpan)baseValue;
+      if (ts.Ticks <= 0) {
+        return TimeSpan.FromMinutes(5);
+      }
+      else {
+        return baseValue;
+      }
+    }
 
 		private static void TicksTimeSpanChanged(DependencyObject o, DependencyPropertyChangedEventArgs e) {
 			TimelineRulerControl ruler = (TimelineRulerControl)o;
@@ -168,21 +177,20 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 					double pixelPerTick = 1D / TickTimeSpan.Ticks;
 					long ticks = (long) (150 / pixelPerTick);
 					effectiveBlockSpan = TimeSpan.FromTicks(ticks);
-				//  double ratio = BlockTimeSpan.Ticks / TickTimeSpan.Ticks;
-				//  if (ratio < 500) {
-				//    effectiveBlockSpan = BlockTimeSpan;
-				//  }
-				//  else {
-				//    effectiveBlockSpan = TimeSpan.FromTicks(TickTimeSpan.Ticks / 500);
-				//  }
 				}
 
 				return effectiveBlockSpan.Value;
 			}
 		}
 
+    private readonly List<RulerBlockItem> EmptyRulerBlockList = new List<RulerBlockItem>();
+
 		private void UpdateRulerBlocks() {
-			if (MinimumDate.HasValue && MaximumDate.HasValue) {
+			if (MinimumDate == null && MaximumDate == null) {
+         // Clear all block
+        RulerBlocks = EmptyRulerBlockList;
+      }
+      else {
 				TimeSpan timeframe = MaximumDate.Value - MinimumDate.Value;
 				int totalBlocks = (int)Math.Ceiling((double) (timeframe.Ticks / EffectiveBlockTimeSpan.Ticks));
 				totalBlocks++;

@@ -70,9 +70,9 @@
                     <StackPanel>
                         <Border BorderBrush="{TemplateBinding Border.BorderBrush}" BorderThickness="{TemplateBinding Border.BorderThickness}" Name="Bd" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True" Padding="{TemplateBinding Control.Padding}">
                             <r:TreeGridViewRowPresenter x:Name="PART_Header"
-                FirstColumnIndent="{Binding Level,Converter={StaticResource LevelToIndentConverter},RelativeSource={RelativeSource AncestorType={x:Type r:TreeListViewItem}},ConverterParameter=19}"
-                Content="{TemplateBinding Header}" 
-                Columns="{Binding Path=Columns,RelativeSource={RelativeSource AncestorType={x:Type r:TreeListView}}}">
+                                FirstColumnIndent="{Binding Level,Converter={StaticResource LevelToIndentConverter},RelativeSource={RelativeSource AncestorType={x:Type r:TreeListViewItem}},ConverterParameter=19}"
+                                Content="{TemplateBinding Header}" 
+                                Columns="{Binding Path=Columns,RelativeSource={RelativeSource AncestorType={x:Type r:TreeListView}}}">
                                 <r:TreeGridViewRowPresenter.Expander>
                                     <Grid>
                                         <ToggleButton Width="19" Height="16" ClickMode="Press" Name="Expander"
@@ -303,7 +303,11 @@
             <Setter.Value>
 
                 <ControlTemplate TargetType="r:TreeListView">
-                    <mwt:ClassicBorderDecorator BorderBrush="{TemplateBinding Border.BorderBrush}" BorderStyle="Sunken" BorderThickness="{TemplateBinding Border.BorderThickness}" Name="Bd" Background="{TemplateBinding Panel.Background}" SnapsToDevicePixels="True">
+                    <mwt:ClassicBorderDecorator BorderBrush="{TemplateBinding Border.BorderBrush}" BorderStyle="Sunken" 
+                                                BorderThickness="{TemplateBinding Border.BorderThickness}" 
+                                                Name="Bd" 
+                                                Background="{TemplateBinding Panel.Background}" 
+                                                SnapsToDevicePixels="True">
 
                         <ScrollViewer Style="{StaticResource scroll}" Background="{TemplateBinding Background}"
                           Focusable="false"

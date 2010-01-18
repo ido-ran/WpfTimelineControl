@@ -8,9 +8,6 @@ using System.ComponentModel;
 
 namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
-  /// <summary>
-  /// Represent a visual item display on a TimelineControl.
-  /// </summary>
 	public class TimelineItem : ContentControl, INotifyPropertyChanged {
 
 		static TimelineItem() {

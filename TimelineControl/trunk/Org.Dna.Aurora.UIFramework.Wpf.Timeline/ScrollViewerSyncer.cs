@@ -6,11 +6,7 @@ using System.Windows.Controls;
 using System.Windows;
 
 namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
-
-  /// <summary>
-  /// Sync two ScrollViewer to present the same content.
-  /// </summary>
-  public class ScrollViewerSyncer {
+	public class ScrollViewerSyncer {
 
 		private ScrollViewer sv1;
 		private ScrollViewer sv2;
