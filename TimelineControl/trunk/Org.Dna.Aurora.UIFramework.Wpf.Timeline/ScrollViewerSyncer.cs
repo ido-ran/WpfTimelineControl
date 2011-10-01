@@ -59,8 +59,10 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 			}
 		}
 
-		private bool sv1HF = false;
+		private bool sv1HF;
+/*
 		private bool sv2HF = false;
+*/
 
 		private void MatchHeightDifferences() {
 			if (sv1HorizontalVisible == sv2HorizontalVisible) {

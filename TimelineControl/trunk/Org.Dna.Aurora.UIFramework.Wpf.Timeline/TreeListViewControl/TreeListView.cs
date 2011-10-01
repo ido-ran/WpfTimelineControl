@@ -18,10 +18,6 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline.TreeListViewControl {
 
 		static TreeListView() {
 			DefaultStyleKeyProperty.OverrideMetadata(typeof(TreeListView), new FrameworkPropertyMetadata(typeof(TreeListView)));
-
-			//ItemsPanelTemplate template = new ItemsPanelTemplate(new FrameworkElementFactory(typeof(VirtualizingStackPanel)));
-			//template.Seal();
-			//ItemsControl.ItemsPanelProperty.OverrideMetadata(typeof(TreeListView), new FrameworkPropertyMetadata(template));
 		}
 
 		protected override DependencyObject GetContainerForItemOverride() {
@@ -100,17 +96,20 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline.TreeListViewControl {
 
 		private GridViewColumnCollection _columns;
 
-    public bool SetSelectedItem(object item) {
-      if (item == null) return false;
+    // This method was replaced by TreeViewExtensions which support select of
+    // top-level item as well as items path (hierarchical item).
 
-      TreeListViewItem container = 
-        (TreeListViewItem)ItemContainerGenerator.ContainerFromItem(item);
-      if (container != null) {
-        container.IsSelected = true;
-        return true;
-      }
+    //public bool SetSelectedItem(object item) {
+    //  if (item == null) return false;
 
-      return false;
-    }
+    //  TreeListViewItem container = 
+    //    (TreeListViewItem)ItemContainerGenerator.ContainerFromItem(item);
+    //  if (container != null) {
+    //    container.IsSelected = true;
+    //    return true;
+    //  }
+
+    //  return false;
+    //}
 	}
 }
