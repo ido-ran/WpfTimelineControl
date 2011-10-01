@@ -13,8 +13,8 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 	public abstract class TimelinePanel : Panel {
 
 		static TimelinePanel() {
-			MinimumDateProperty = Timeline.MinimumDateProperty.AddOwner(typeof(TimelinePanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure));
-			MaximumDateProperty = Timeline.MaximumDateProperty.AddOwner(typeof(TimelinePanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure));
+			MinimumDateProperty = Timeline.MinimumDateProperty.AddOwner(typeof(TimelinePanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
+      MaximumDateProperty = Timeline.MaximumDateProperty.AddOwner(typeof(TimelinePanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsArrange));
 			TickTimeSpanProperty = Timeline.TickTimeSpanProperty.AddOwner(typeof(TimelinePanel), new FrameworkPropertyMetadata(Timeline.TickTimeSpanDefaultValue, FrameworkPropertyMetadataOptions.Inherits | FrameworkPropertyMetadataOptions.AffectsMeasure | FrameworkPropertyMetadataOptions.AffectsRender));
 		}
 
@@ -30,15 +30,18 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
 
 		public static readonly DependencyProperty StartDateProperty =
-				DependencyProperty.RegisterAttached("StartDate", typeof(DateTime?), typeof(TimelinePanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
+				DependencyProperty.RegisterAttached("StartDate", typeof(DateTime?), typeof(TimelinePanel), 
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
 		public static readonly DependencyProperty EndDateProperty =
-				DependencyProperty.RegisterAttached("EndDate", typeof(DateTime?), typeof(TimelinePanel), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
+				DependencyProperty.RegisterAttached("EndDate", typeof(DateTime?), typeof(TimelinePanel), 
+        new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
 		public static readonly DependencyProperty RowIndexProperty =
-				DependencyProperty.RegisterAttached("RowIndex", typeof(int), typeof(TimelinePanel), new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsParentArrange));
+        DependencyProperty.RegisterAttached("RowIndex", typeof(int), typeof(TimelinePanel), 
+        new FrameworkPropertyMetadata(0, FrameworkPropertyMetadataOptions.AffectsParentMeasure));
 
 		private static readonly DependencyPropertyKey ActualRowIndexPropertyKey =
-			DependencyProperty.RegisterAttachedReadOnly("ActualRowIndex", typeof(int), typeof(TimelinePanel),
-			new FrameworkPropertyMetadata(0));
+			  DependencyProperty.RegisterAttachedReadOnly("ActualRowIndex", typeof(int), typeof(TimelinePanel),
+        new FrameworkPropertyMetadata(0));
 
 		public static readonly DependencyProperty ActualRowIndexProperty =
 			ActualRowIndexPropertyKey.DependencyProperty;
@@ -116,14 +119,14 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
 		protected double PixelsPerTick {
 			get {
-				//return (double)1/500000000;
-				//return ((double)1 / TickTimeSpan.Ticks);
 				return Timeline.GetPixelsPerTick(this);
 			}
 		}
 
 
-
+    /// <summary>
+    /// Get or set the height of each row in the timeline panel
+    /// </summary>
 		public double RowHeight {
 			get { return (double)GetValue(RowHeightProperty); }
 			set { SetValue(RowHeightProperty, value); }
@@ -135,7 +138,9 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 				new FrameworkPropertyMetadata(20D, FrameworkPropertyMetadataOptions.AffectsMeasure));
 
 
-
+    /// <summary>
+    /// Get or set the vertical margin between two rows.
+    /// </summary>
 		public double RowVerticalMargin {
 			get { return (double)GetValue(RowVerticalMarginProperty); }
 			set { SetValue(RowVerticalMarginProperty, value); }
@@ -175,7 +180,9 @@ namespace Org.Dna.Aurora.UIFramework.Wpf.Timeline {
 
 		protected virtual void ArrangeChild(UIElement child, int rowIndex) {
 			Rect childRect = CalcChildRect((TimelineItem) child, rowIndex);
-			child.Arrange(childRect);
+      if (!childRect.IsEmpty) {
+        child.Arrange(childRect);
+      }
 		}
 
 		protected Rect CalcChildRect(TimelineItem child, int childRowIndex) {

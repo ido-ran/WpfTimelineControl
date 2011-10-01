@@ -374,7 +374,13 @@ My Blog: dotdotnet.blogger.com
             <StackPanel Orientation="Horizontal" Grid.ColumnSpan="3">
                 <TextBlock Text="Zoom:" FontWeight="Bold" Margin="0,0,5,0" />
                 <TextBlock Text="{Binding ElementName=Slid, Path=Value}" Width="30" ToolTip="{StaticResource ZoomTooltip}"/>
-                <Slider x:Name="Slid" IsDirectionReversed="True" Width="100" Minimum="10" Maximum="360" ToolTip="{StaticResource ZoomTooltip}" />
+                <Slider x:Name="Slid" Width="100" 
+                        Minimum="{Binding ElementName=TheGantt, Path=MinimumTickTimeSpan.TotalSeconds}" 
+                        Maximum="{Binding ElementName=TheGantt, Path=MaximumTickTimeSpan.TotalSeconds}" 
+                        ToolTip="{StaticResource ZoomTooltip}" />
+                <TextBlock Text="Display TimeSpan:" Margin="20,0,4,0" />
+                <TextBlock Text="{Binding ElementName=TheGantt, Path=DisplayTimeSpan}" 
+                           ToolTip="This TimeSpan represent the amount of real-world-time display inside the TimelineControl. You can change the zoom factor to change it."/>
             </StackPanel>
 
             <!--
